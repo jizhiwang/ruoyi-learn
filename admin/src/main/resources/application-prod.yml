@@ -1,0 +1,3 @@
+learn:
+  env: prod
+  banner: 生产环境
