@@ -31,17 +31,18 @@
         </dependencies>
     </dependencyManagement>
 
+
+    <modules>
+        <module>admin</module>
+        <module>common</module>
+        <module>generator</module>
+        <module>system</module>
+        <module>quartz</module>
+        <module>framework</module>
+    </modules>
+    <packaging>pom</packaging>
     <!-- ③ 依赖（版本由 BOM 管） -->
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <optional>true</optional>
-        </dependency>
     </dependencies>
 
     <!-- ④ 仓库（必须在 build 之前） -->
@@ -59,18 +60,6 @@
     <!-- ⑤ 构建 -->
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
