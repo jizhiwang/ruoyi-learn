@@ -4,244 +4,138 @@ import com.example.learn.common.constant.HttpStatus;
 
 import java.util.LinkedHashMap;
 
-/**
- * 操作消息提醒
- *
- * @author ruoyi
- */
-public class Result extends LinkedHashMap<String, Object>
-{
+public class Result extends LinkedHashMap<String, Object> {
+
     private static final long serialVersionUID = 1L;
+
     public static final String CODE_KEY = "code";
     public static final String MSG_KEY = "msg";
     public static final String DATA_KEY = "data";
 
-    /** 默认成功提示 */
     private static final String DEFAULT_SUCCESS_MSG = "操作成功";
-
-    /** 默认失败提示 */
     private static final String DEFAULT_ERROR_MSG = "操作失败";
 
-    public Result()
-    {
-        this(HttpStatus.SUCCESS, DEFAULT_SUCCESS_MSG);
+    // ==================== 构造器 ====================
+
+    public Result() {
+        this(HttpStatus.SUCCESS, DEFAULT_SUCCESS_MSG, null);
     }
 
-    public Result(int code, String msg)
-    {
+    public Result(int code, String msg) {
+        this(code, msg, null);
+    }
+
+    /** 唯一真正做初始化的构造器，其余构造器都委托到这里 */
+    public Result(int code, String msg, Object data) {
         super.put(CODE_KEY, code);
         super.put(MSG_KEY, msg);
-    }
-
-    public Result(int code, String msg, Object data)
-    {
-        this(code, msg);
-        if (data != null)
-        {
+        if (data != null) {
             super.put(DATA_KEY, data);
         }
     }
 
+    // ==================== 成功 ====================
 
-
-    /**
-     * 返回成功消息
-     *
-     * @return 成功消息
-     */
-    public static Result success()
-    {
-        return Result.success(DEFAULT_SUCCESS_MSG);
+    /** 成功，无数据：{"code":200,"msg":"操作成功"} */
+    public static Result success() {
+        return new Result(HttpStatus.SUCCESS, DEFAULT_SUCCESS_MSG, null);
     }
 
     /**
-     * 返回成功数据
-     *
-     * @return 成功消息
+     * 成功，携带数据。
+     * 单参数明确视为「数据」，即使传的是 String。
      */
-    public static Result success(Object data)
-    {
-        return Result.success(DEFAULT_SUCCESS_MSG, data);
+    public static Result success(Object data) {
+        return new Result(HttpStatus.SUCCESS, DEFAULT_SUCCESS_MSG, data);
     }
 
-    /**
-     * 返回成功消息
-     *
-     * @param msg 返回内容
-     * @return 成功消息
-     */
-    public static Result success(String msg)
-    {
-        return Result.success(msg, null);
+    /** 成功，仅自定义提示消息：{"code":200,"msg":"保存成功"} */
+    public static Result successMsg(String msg) {
+        return new Result(HttpStatus.SUCCESS, msg, null);
     }
 
-    /**
-     * 返回成功消息
-     *
-     * @param msg 返回内容
-     * @param data 数据对象
-     * @return 成功消息
-     */
-    public static Result success(String msg, Object data)
-    {
+    /** 成功，提示消息 + 数据 */
+    public static Result success(String msg, Object data) {
         return new Result(HttpStatus.SUCCESS, msg, data);
     }
 
-    /**
-     * 返回警告消息
-     *
-     * @param msg 返回内容
-     * @return 警告消息
-     */
-    public static Result warn(String msg)
-    {
+    // ==================== 警告 ====================
+
+    public static Result warn(String msg) {
         return new Result(HttpStatus.WARN, msg, null);
     }
 
-    /**
-     * 返回警告消息
-     *
-     * @param msg 返回内容
-     * @param data 数据对象
-     * @return 警告消息
-     */
-    public static Result warn(String msg, Object data)
-    {
+    public static Result warn(String msg, Object data) {
         return new Result(HttpStatus.WARN, msg, data);
     }
 
-    /**
-     * 返回错误消息
-     *
-     * @return 错误消息
-     */
-    public static Result error()
-    {
+    // ==================== 错误 ====================
+
+    /** 错误，默认提示 "操作失败" */
+    public static Result error() {
         return new Result(HttpStatus.ERROR, DEFAULT_ERROR_MSG, null);
     }
 
-    /**
-     * 返回错误消息
-     *
-     * @param msg 返回内容
-     * @return 错误消息
-     */
-    public static Result error(String msg)
-    {
+    public static Result error(String msg) {
         return new Result(HttpStatus.ERROR, msg, null);
     }
 
-    /**
-     * 返回错误消息
-     *
-     * @param msg 返回内容
-     * @param data 数据对象
-     * @return 错误消息
-     */
-    public static Result error(String msg, Object data)
-    {
+    public static Result error(String msg, Object data) {
         return new Result(HttpStatus.ERROR, msg, data);
     }
 
-    /**
-     * 返回错误消息
-     *
-     * @param code 状态码
-     * @param msg 返回内容
-     * @return 错误消息
-     */
-    public static Result error(int code, String msg)
-    {
+    public static Result error(int code, String msg) {
         return new Result(code, msg, null);
     }
 
-    /**
-     * 返回错误消息
-     *
-     * @param code 状态码
-     * @param msg 返回内容
-     * @param data 数据对象
-     * @return 错误消息
-     */
-    public static Result error(int code, String msg, Object data)
-    {
+    public static Result error(int code, String msg, Object data) {
         return new Result(code, msg, data);
     }
 
-    /**
-     * 状态码，缺失或类型不符时按 500 处理
-     *
-     * @return 状态码
-     */
-    public int getCode()
-    {
-        Object code = this.get(CODE_KEY);
-        return code instanceof Number number ? number.intValue() : HttpStatus.ERROR;
+    // ==================== 读取 ====================
+
+    /** 状态码，缺失或非数字时按 500 处理 */
+    public int getCode() {
+        Object code = get(CODE_KEY);
+        return code instanceof Number n ? n.intValue() : HttpStatus.ERROR;
     }
 
-    /**
-     * 提示消息，缺失时返回空串
-     *
-     * @return 提示消息
-     */
-    public String getMsg()
-    {
-        Object msg = this.get(MSG_KEY);
+    /** 提示消息，缺失时返回空串 */
+    public String getMsg() {
+        Object msg = get(MSG_KEY);
         return msg == null ? "" : msg.toString();
     }
 
-    /**
-     * 业务数据
-     *
-     * @param <T> 数据类型
-     * @return 业务数据，可能为 null
-     */
+    /** 业务数据，可能为 null */
     @SuppressWarnings("unchecked")
-    public <T> T getData()
-    {
-        return (T) this.get(DATA_KEY);
+    public <T> T getData() {
+        return (T) get(DATA_KEY);
     }
 
-    /**
-     * 是否为成功消息
-     *
-     * @return 结果
-     */
-    public boolean isSuccess()
-    {
+    /** 是否成功（code == 200） */
+    public boolean isSuccess() {
         return getCode() == HttpStatus.SUCCESS;
     }
 
-    /**
-     * 是否为警告消息
-     *
-     * @return 结果
-     */
-    public boolean isWarn()
-    {
+    /** 是否警告（code == 601） */
+    public boolean isWarn() {
         return getCode() == HttpStatus.WARN;
     }
 
     /**
-     * 是否为错误消息
-     *
-     * @return 结果
+     * 是否错误（code == 500）。
+     * 注意：这里只精确匹配 ERROR，401/403/404 等自定义错误码不会被识别。
+     * 如需「非成功即错误」语义，改用 {@link #isSuccess()} 取反。
      */
-    public boolean isError()
-    {
+    public boolean isError() {
         return getCode() == HttpStatus.ERROR;
     }
 
-    /**
-     * 方便链式调用
-     *
-     * @param key 键
-     * @param value 值
-     * @return 数据对象
-     */
+    // ==================== 链式扩展 ====================
+
+    /** 追加自定义字段，返回 this 以支持链式调用 */
     @Override
-    public Result put(String key, Object value)
-    {
+    public Result put(String key, Object value) {
         super.put(key, value);
         return this;
     }

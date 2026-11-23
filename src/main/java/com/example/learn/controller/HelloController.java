@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.example.learn.common.Result;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,11 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloController {
 
     @GetMapping("/hello")
-    public Map<String, Object> hello(@RequestParam(defaultValue = "RuoYi") String name) {
-        Map<String, Object> result = new LinkedHashMap<>();
-        result.put("message", "Hello, " + name + "!");
-        result.put("time", LocalDateTime.now().toString());
-        return result;
+    public Result hello(@RequestParam(defaultValue = "Ted") String name) {
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("message", "Hello, " + name + "!");
+        data.put("time", LocalDateTime.now().toString());
+        return Result.success(data);
     }
 
     @GetMapping("/health")
